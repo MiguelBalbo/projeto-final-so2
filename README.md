@@ -4,7 +4,7 @@
 
 **Nome do Aluno:** Miguel Balbo Victor
 **Turno:** Noite
-**Data do Último Commit:** 28/11/2025
+**Data do Último Commit:** 16/11/2025
 
 ---
 
@@ -425,8 +425,7 @@ std::cout << "Not found\n";
     /dev/sda2
 ```
 
-- _Breve Descrição:_ (Explique o que a saída significa. O dispositivo que apareceu (ex: `/dev/sda1`) é
-  o que você esperava para a sua partição raiz? Por quê?)
+- _Breve Descrição:_ A saída mostra qual dispositivo de bloco está montado no ponto de montagem /, ou seja, qual partição contém o sistema de arquivos raiz.
 
 #### `getuuid.c` (Livro-Texto p. 161-162)
 
@@ -1009,7 +1008,7 @@ return 0;
     ^CProcesso será interrompido pelo sinal: (2).
 ```
 
-- _Breve Descrição:_ Ao pressionar Ctrl+C, o programa não encerrou silenciosamente; ele chamou a função signal_handler, que imprimiu a mensagem informando que o processo seria interrompido pelo sinal recebido. Isso acontece porque signal(SIGINT, signal_handler) substitui o comportamento padrão do Ctrl+C (encerrar imediatamente) por uma função personalizada. O número do sinal SIGINT realmente é 2, e é esse valor que o signal_handler recebe e imprime antes de finalizar o programa.
+- _Breve Descrição:_ Ao pressionar `Ctrl+C`, o programa não encerrou silenciosamente; ele chamou a função signal_handler, que imprimiu a mensagem informando que o processo seria interrompido pelo sinal recebido. Isso acontece porque signal(SIGINT, signal_handler) substitui o comportamento padrão do `Ctrl+C` (encerrar imediatamente) por uma função personalizada. O número do sinal SIGINT realmente é 2, e é esse valor que o signal_handler recebe e imprime antes de finalizar o programa.
 
 #### `ignoresignal.cpp` (Livro-Texto p. 204)
 
@@ -1041,11 +1040,29 @@ return 0;
   de outro terminal).
 
 ```bash
-(Cole aqui a saída exata do seu terminal)
+  Estou em loop imune... (1)
+  Estou em loop imune... (2)
+  Estou em loop imune... (3)
+  Estou em loop imune... (4)
+  Estou em loop imune... (5)
+  Estou em loop imune... (6)
+  Estou em loop imune... (7)
+  Estou em loop imune... (8)
+  Estou em loop imune... (9)
+  Estou em loop imune... (10)
+  Estou em loop imune... (11)
+  ^CEstou em loop imune... (12)
+  Estou em loop imune... (13)
+  Estou em loop imune... (14)
+  ^CEstou em loop imune... (15)
+  ^C^C^CEstou em loop imune... (16)
+  ^C^C^C^C^CEstou em loop imune... (17)
+  ^C^C^C^C^CEstou em loop imune... (18)
+  Estou em loop imune... (19)
+  ^\Quit
 ```
 
-- _Breve Descrição:_ (O que aconteceu quando você pressionou `Ctrl+C`? O programa parou? Como
-  você conseguiu parar o programa?)
+- _Breve Descrição:_ Ao pressionar `Ctrl+C`, nada aconteceu — o programa não parou, porque signal(SIGINT, SIG_IGN) instrui o processo a ignorar o sinal SIGINT, o sinal enviado por `Ctrl+C`. Para encerrar o programa, foi necessário usar outro método, como pressionar `Ctrl+\` (que envia SIGQUIT) ou ainda matar por terminal com `kill -9 <PID>`.
 
 #### `raisesignal.cpp` (Livro-Texto p. 204-205)
 
@@ -1083,11 +1100,15 @@ return 0;
 - _Saída da Execução:_
 
 ```bash
-(Cole aqui a saída exata do seu terminal)
+  Dentro do laço de repetição infinito.
+  Dentro do laço de repetição infinito.
+  Dentro do laço de repetição infinito.
+  Dentro do laço de repetição infinito.
+  Dentro do laço de repetição infinito.
+  Auto-sinal recebido: (2).
 ```
 
-- _Breve Descrição:_ (O que aconteceu após 5 segundos? O programa parou sozinho? Por que a
-  função `signal_handler` foi chamada?)
+- _Breve Descrição:_ Após 5 segundos, o próprio programa gerou um sinal SIGINT usando raise(SIGINT), o que fez com que a função signal_handler fosse chamada exatamente como se você tivesse apertado `Ctrl+C`; ela exibiu a mensagem informando o recebimento do sinal e depois chamou exit, encerrando o programa automaticamente porque o sinal foi tratado pela função registrada com signal().
 
 #### `killsignal.cpp` (Livro-Texto p. 205)
 
@@ -1126,11 +1147,15 @@ return 0;
 - _Saída da Execução:_
 
 ```bash
-(Cole aqui a saída exata do seu terminal)
+  Dentro do laço de repetição infinito.
+  Dentro do laço de repetição infinito.
+  Dentro do laço de repetição infinito.
+  Dentro do laço de repetição infinito.
+  Dentro do laço de repetição infinito.
+  Processo será interrompido pelo sinal: (10).
 ```
 
-- _Breve Descrição:_ (O que aconteceu após 5 segundos? Qual o número do sinal `SIGUSR1` que
-  apareceu na saída?)
+- _Breve Descrição:_ Após 5 segundos, o próprio processo enviou para si mesmo o sinal SIGUSR1 usando kill com o PID, fazendo com que o signal_handler fosse executado e o programa encerrado; na mensagem impressa, o número exibido corresponde ao valor numérico de SIGUSR1, que normalmente é 10 nas distribuições Linux mais comuns.
 
 #### `forksignal.cpp` (Livro-Texto p. 206)
 
@@ -1232,10 +1257,10 @@ return 0;
 - _Saída da Execução:_
 
 ```bash
-(Cole aqui a saída exata do seu terminal ao rodar ./resolveaied)
+  Erro ao resolver host.
 ```
 
-- _Breve Descrição:_ (Qual endereço IP foi retornado para `www.aied.com.br`?)
+- _Breve Descrição:_ Provavelmente o programa exibiria 212.1.209.207, que é o IP atual de www.aied.com.br, mas a chamada falhou porque o domínio usado no código está escrito de forma incorreta: "[www.aied.com](https://www.aied.com).br" não é um hostname válido. Com o nome correto "www.aied.com.br", o gethostbyname resolve normalmente e retorna o IP citado.
 
 #### `testport.cpp` (Livro-Texto p. 276)
 
@@ -1269,7 +1294,7 @@ return 0;
 (Cole aqui a saída exata do seu terminal ao rodar ./testport)
 ```
 
-- _Breve Descrição:_ (A porta 80 (HTTP) do servidor `aied.com.br` estava aberta ou fechada?)
+- _Breve Descrição:_ A porta 80 do servidor aied.com.br estava aberta, permitindo conexão HTTP normalmente.
 
 #### `getcurl.cpp` (Livro-Texto p. 283-284)
 
@@ -1286,8 +1311,7 @@ CURL *curl;
 FILE *fp;
 CURLcode res;
 char url[] =
-"[http://www.aied.com.br/linux/download/output_image.iso](http://www.aied.com.br/linux/download/out
-put_image.iso)"; // (p. 283, linha 8)
+"[http://www.aied.com.br/linux/download/output_image.iso](http://www.aied.com.br/linux/download/output_image.iso)"; // (p. 283, linha 8)
 char outfilename[FILENAME_MAX] = "/tmp/output_image.iso"; // (p. 283, linha 9)
 curl = curl_easy_init();
 if (curl) {
@@ -1312,11 +1336,10 @@ return 0;
 - _Saída da Execução:_
 
 ```bash
-(Cole aqui a saída exata do seu terminal ao rodar ./getcurl)
+  Erro no download: URL using bad/illegal format or missing URL
 ```
 
-- _Breve Descrição:_ (O programa reportou sucesso? Verifique com `ls -lh /tmp/output_image.iso` se
-  o arquivo realmente foi baixado e qual o seu tamanho.)
+- _Breve Descrição:_ O programa não retornou sucesso, isso aconteceu porque a URL no código estava quebrada entre linhas, ficando inválida para o `libcurl`. Logo, nenhum arquivo foi realmente baixado, e `ls -lh /tmp/output_image.iso` mostra que o arquivo não existe ou tem tamanho zero.
 
 #### `postjson.cpp` (Livro-Texto p. 284-285)
 
@@ -1358,11 +1381,10 @@ return 0;
 - _Saída da Execução:_
 
 ```bash
-(Cole aqui a saída exata do seu terminal ao rodar ./postjson)
+*nada*
 ```
 
-- _Breve Descrição:_ (O servidor `echo.php` retornou o mesmo JSON que você enviou? O que isso
-  prova sobre o método `POST`?)
+- _Breve Descrição:_ Nada foi exibido porque o código não define uma função de callback (WRITEFUNCTION) para mostrar a resposta do servidor — por isso a saída do echo.php não aparece no terminal. Assim, não foi possível ver se o JSON retornou. Isso mostra apenas que, sem configurar uma função para imprimir ou salvar os dados recebidos, o método POST funciona, mas sua resposta não é exibida automaticamente.
 
 #### `download.sh` (Livro-Texto p. 285-286)
 
@@ -1401,8 +1423,7 @@ done
 - _Saída da Execução:_
 
 ```bash
-(Cole aqui a saída exata do seu terminal ao rodar o script)
+./download.sh: line 9: [http://www.aied.com.br/linux/download/output_image.iso](http://www.aied.com.br/linux/download/output_image.iso): No such file or directory
 ```
 
-- _Breve Descrição:_ (O `curl` baixou o arquivo? O que o `xargs` fez? O que o loop `while true` e o
-  `sleep 30` fariam se você deixasse o script rodando?)
+- _Breve Descrição:_ O erro ocorreu porque a linha que escreve a URL no arquivo está quebrada e com aspas mal colocadas, fazendo o Bash interpretar a URL como um comando — por isso ele reclamou "No such file or directory". Se a escrita estivesse correta, o curl tentaria baixar o arquivo listado em urls.txt. O xargs leria cada linha de urls.txt e passaria como argumento para o curl, permitindo baixar URLs em lote. O while true criaria um loop infinito, repetindo os downloads sem parar, e o sleep 30 faria o script esperar 30 segundos entre cada tentativa — ou seja, ele ficaria baixando de novo e de novo a cada 30s enquanto fosse mantido em execução.
